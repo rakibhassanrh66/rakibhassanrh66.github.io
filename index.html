@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Rakib Hassan | Portfolio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="Icons/R.svg" type="image/svg+xml">
 
     <!-- Base Styles -->
     <link rel="stylesheet" href="CSS/BASE_CSS/basedesign.css">
@@ -11,7 +12,7 @@
 <body>
 
     <!-- Sidebar Toggle -->
-    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+    <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Toggle menu">&#9776;</button>
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -23,9 +24,11 @@
             <a href="HTML/contact.html">Contact</a>
         </nav>
     </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
 
-    <!-- Main Content -->
-    <main class="main">
+    <div class="content-wrap">
+        <!-- Main Content -->
+        <main class="main">
 
         <!-- HOME -->
         <section id="home" class="section">
@@ -36,7 +39,7 @@
 
                 <div class="hero-content">
                     <h1>Rakib Hassan</h1>
-                    <p>Web Engineering • Cyber Security • UI Systems</p>
+                    <p>Web Engineering &bull; Cyber Security &bull; UI Systems</p>
                     <a class="btn" href="Others/CV_of_Rakib.pdf" download>
                         Download CV
                     </a>
@@ -78,14 +81,14 @@
             <div class="grid">
                 <div class="card">
                     <p>
-                        📧
+                        &#128231;
                         <a href="mailto:rakibhassan.rh66@gmail.com">
                             rakibhassan.rh66@gmail.com
                         </a>
                     </p>
 
                     <p>
-                        🌐
+                        &#127760;
                         <a href="https://www.facebook.com/rakibhassan.rh66"
                            target="_blank" rel="noopener">
                             Facebook
@@ -93,7 +96,7 @@
                     </p>
 
                     <p>
-                        ✈
+                        &#9992;
                         <a href="https://t.me/deadbrat"
                            target="_blank" rel="noopener">
                             Telegram
@@ -103,7 +106,7 @@
 
                 <div class="card">
                     <p>
-                        💼
+                        &#128188;
                         <a href="https://www.linkedin.com/in/rakibhassan66/"
                            target="_blank" rel="noopener">
                             LinkedIn
@@ -111,7 +114,7 @@
                     </p>
 
                     <p>
-                        🧑‍💻
+                        &#128187;
                         <a href="https://github.com/rakibhassanrh66"
                            target="_blank" rel="noopener">
                             GitHub
@@ -119,7 +122,7 @@
                     </p>
 
                     <p>
-                        🔗
+                        &#128279;
                         <a href="https://bio.link/rakibhassan66"
                            target="_blank" rel="noopener">
                             Bio Link (All-in-One)
@@ -129,9 +132,33 @@
             </div>
         </section>
 
-    </main>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <h3>Rakib Hassan</h3>
+                    <p class="footer-note">
+                        Building secure, scalable, and thoughtful digital systems.
+                    </p>
+                </div>
+
+                <div class="footer-meta">
+                    <div>Local time: <span data-clock></span></div>
+                    <div>Timezone: <span data-timezone></span></div>
+                    <div>Session time: <span data-session></span></div>
+                </div>
+
+                <div class="footer-counter">
+                    <div class="elfsight-app-REPLACE_WITH_YOUR_APP_ID"></div>
+                    <p class="footer-note">Live visitor counter powered by Elfsight.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     <!-- Base Scripts -->
+    <script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>
     <script src="JS/BASE/base.js"></script>
 </body>
 </html>

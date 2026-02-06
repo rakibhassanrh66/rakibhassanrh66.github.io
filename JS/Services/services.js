@@ -1,9 +1,14 @@
-console.log("Hello braddayd");
-console.warn("Hello braddayd warning replaying ");
-console.error("Hello braddayd eroor responding");
+document.addEventListener("DOMContentLoaded", () => {
+  const cards = document.querySelectorAll(".service-card");
+  if (!cards.length) return;
 
-var name = carlMark;
-var year = 1998;
+  cards.forEach(card => {
+    card.addEventListener("focusin", () => {
+      card.classList.add("is-focused");
+    });
 
-let name = deadbrat;
-const year = 2024;
+    card.addEventListener("focusout", () => {
+      card.classList.remove("is-focused");
+    });
+  });
+});

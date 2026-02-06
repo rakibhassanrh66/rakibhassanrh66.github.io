@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>About | Rakib Hassan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../Icons/R.svg" type="image/svg+xml">
 
     <!-- Base Styles -->
     <link rel="stylesheet" href="../CSS/BASE_CSS/basedesign.css">
@@ -11,18 +12,19 @@
 <body>
 
     <!-- Sidebar Toggle -->
-    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+    <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Toggle menu">&#9776;</button>
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="logo">R</div>
         <nav>
-            <a href="openningpage.html#home">Home</a>
+            <a href="../index.html#home">Home</a>
             <a href="about.html">About</a>
             <a href="service.html">Services</a>
             <a href="contact.html">Contact</a>
         </nav>
     </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
 
     <!-- Main Content -->
     <main class="main">
@@ -54,7 +56,7 @@
                 <div class="card">
                     <h3>Early Interest</h3>
                     <p>
-                        My journey started with curiosity about how systems work internally —
+                        My journey started with curiosity about how systems work internally &mdash;
                         from networks and operating systems to web technologies.
                     </p>
                 </div>
@@ -148,7 +150,30 @@
 
     </main>
 
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <h3>Rakib Hassan</h3>
+                <p class="footer-note">
+                    Building secure, scalable, and thoughtful digital systems.
+                </p>
+            </div>
+
+            <div class="footer-meta">
+                <div>Local time: <span data-clock></span></div>
+                <div>Timezone: <span data-timezone></span></div>
+                <div>Session time: <span data-session></span></div>
+            </div>
+
+            <div class="footer-counter">
+                <div class="elfsight-app-REPLACE_WITH_YOUR_APP_ID"></div>
+                <p class="footer-note">Live visitor counter powered by Elfsight.</p>
+            </div>
+        </div>
+    </footer>
+
     <!-- Base Scripts -->
+    <script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>
     <script src="../JS/BASE/base.js"></script>
 </body>
 </html>

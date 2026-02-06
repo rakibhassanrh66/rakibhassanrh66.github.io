@@ -5,6 +5,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const body = document.body;
   const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebar-overlay");
+  const mobileQuery = window.matchMedia("(max-width: 900px)");
+
+  const setDesktopCollapsed = (collapsed) => {
+    if (!sidebar) return;
+    sidebar.classList.toggle("collapsed", collapsed);
+    body.classList.toggle("sidebar-collapsed", collapsed);
+    localStorage.setItem("sidebarCollapsed", String(collapsed));
+  };
+
+  const closeMobileMenu = () => {
+    body.classList.remove("sidebar-open");
+  };
 
   /* =========================
      SIDEBAR CONTROLLER
@@ -12,19 +25,44 @@ document.addEventListener("DOMContentLoaded", () => {
   window.toggleSidebar = function () {
     if (!sidebar) return;
 
-    sidebar.classList.toggle("collapsed");
-    body.classList.toggle("sidebar-collapsed");
+    if (mobileQuery.matches) {
+      body.classList.toggle("sidebar-open");
+      return;
+    }
 
-    // Persist state across pages
     const isCollapsed = sidebar.classList.contains("collapsed");
-    localStorage.setItem("sidebarCollapsed", isCollapsed);
+    setDesktopCollapsed(!isCollapsed);
   };
 
-  // Restore sidebar state on page load
-  if (sidebar && localStorage.getItem("sidebarCollapsed") === "true") {
-    sidebar.classList.add("collapsed");
-    body.classList.add("sidebar-collapsed");
+  // Restore sidebar state on page load (desktop only)
+  if (sidebar && !mobileQuery.matches) {
+    const shouldCollapse = localStorage.getItem("sidebarCollapsed") === "true";
+    setDesktopCollapsed(shouldCollapse);
   }
+
+  // Close mobile menu when overlay or nav link is clicked
+  if (overlay) {
+    overlay.addEventListener("click", closeMobileMenu);
+  }
+
+  if (sidebar) {
+    sidebar.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        if (mobileQuery.matches) {
+          closeMobileMenu();
+        }
+      });
+    });
+  }
+
+  // Handle breakpoint changes cleanly
+  mobileQuery.addEventListener("change", (event) => {
+    closeMobileMenu();
+    if (!event.matches) {
+      const shouldCollapse = localStorage.getItem("sidebarCollapsed") === "true";
+      setDesktopCollapsed(shouldCollapse);
+    }
+  });
 
   /* =========================
      SCROLL PROGRESS
@@ -100,33 +138,70 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-});
-/* =========================
-   ABOUT PAGE MICRO-INTERACTIONS
-========================= */
-const aboutCards = document.querySelectorAll(
-  ".section .card, .section .service-card"
-);
+  /* =========================
+     FOOTER CLOCK + SESSION TIMER
+  ========================= */
+  const clockEl = document.querySelector("[data-clock]");
+  const tzEl = document.querySelector("[data-timezone]");
+  const sessionEl = document.querySelector("[data-session]");
+  const sessionStart = performance.now();
 
-aboutCards.forEach(card => {
-  card.addEventListener("mouseenter", () => {
-    card.style.boxShadow = "0 20px 50px rgba(127,90,240,0.35)";
+  const updateClock = () => {
+    if (!clockEl && !tzEl && !sessionEl) return;
+
+    if (clockEl) {
+      const now = new Date();
+      clockEl.textContent = new Intl.DateTimeFormat(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).format(now);
+    }
+
+    if (tzEl) {
+      tzEl.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+    }
+
+    if (sessionEl) {
+      const elapsed = Math.floor((performance.now() - sessionStart) / 1000);
+      const hours = String(Math.floor(elapsed / 3600)).padStart(2, "0");
+      const minutes = String(Math.floor((elapsed % 3600) / 60)).padStart(2, "0");
+      const seconds = String(elapsed % 60).padStart(2, "0");
+      sessionEl.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+  };
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  /* =========================
+     ABOUT PAGE MICRO-INTERACTIONS
+  ========================= */
+  const aboutCards = document.querySelectorAll(
+    ".section .card, .section .service-card"
+  );
+
+  aboutCards.forEach(card => {
+    card.addEventListener("mouseenter", () => {
+      card.style.boxShadow = "0 20px 50px rgba(127,90,240,0.35)";
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.style.boxShadow = "";
+    });
   });
 
-  card.addEventListener("mouseleave", () => {
-    card.style.boxShadow = "";
+  /* =========================
+     TEXT FADE-IN STAGGER (ABOUT PAGE)
+  ========================= */
+  const aboutSections = document.querySelectorAll(".section");
+
+  aboutSections.forEach(section => {
+    const items = section.querySelectorAll("p, h3");
+
+    items.forEach((el, i) => {
+      el.style.transitionDelay = `${i * 80}ms`;
+    });
   });
-});
 
-/* =========================
-   TEXT FADE-IN STAGGER (ABOUT PAGE)
-========================= */
-const aboutSections = document.querySelectorAll(".section");
-
-aboutSections.forEach(section => {
-  const items = section.querySelectorAll("p, h3");
-
-  items.forEach((el, i) => {
-    el.style.transitionDelay = `${i * 80}ms`;
-  });
 });
