@@ -1,7 +1,8 @@
 # Rakib Hassan's Portfolio Website
 
-![Profile Photo](/Photos/rh.jpg)
-
+![Demo Photo](/Photos/p1.png)
+![Demo Photo 2](/Photos/p2.png)
+![Demo Photo 3](/Photos/p3.png)
 ## Overview
 
 Welcome to my personal portfolio website! This site showcases my work, skills, and projects. It's a reflection of my journey as a developer, highlighting my professional background, expertise, and passion for technology.

@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("sidebar-overlay");
-  const mobileQuery = window.matchMedia("(max-width: 900px)");
+  const mobileQuery = window.matchMedia("(max-width: 768px)");
 
   const setDesktopCollapsed = (collapsed) => {
     if (!sidebar) return;
