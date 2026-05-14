@@ -161,23 +161,22 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right Side: Your Profile Picture */}
-        <motion.div 
-          className="hidden lg:flex relative flex-shrink-0"
+                        {/* Right Side: Your Profile Picture */}
+        <motion.div
+          className="flex relative flex-shrink-0 mt-10 lg:mt-0 justify-center"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          {/* Glowing effect behind the image */}
-          <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 blur opacity-75 animate-pulse"></div>
-          
-          {/* The Image */}
-          <img
-          src="/images/rakib.jpg"
-          alt="Rakib Hassan"
-          className="relative w-72 h-72 rounded-full object-cover border-2 border-white/10 shadow-2xl"
-          style={{ objectPosition: "50% 18%" }}
-          />
+          <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 blur-xl opacity-60 animate-pulse"></div>
+
+          <div className="relative w-56 h-72 sm:w-64 sm:h-80 lg:w-80 lg:h-[420px] rounded-[2rem] p-1 bg-black/30 overflow-hidden">
+            <img
+              src="/images/rakib.jpg"
+              alt="Rakib Hassan"
+              className="w-full h-full rounded-[1.75rem] object-contain border-2 border-white/10 shadow-2xl"
+            />
+          </div>
         </motion.div>
 
       </div>
