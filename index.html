@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rakib Hassan | Cyber Security Engineer</title>
+    <link rel="icon" type="image/svg+xml" href="/icons/r.svg" />
+    <link rel="icon" type="image/png" href="/icons/r.png" />
+    <link rel="apple-touch-icon" href="/icons/r.png" />
+    <meta name="description" content="Rakib Hassan — Cyber Security Engineer specializing in penetration testing, Linux administration, backend development, and applied AI. Based in Dhaka, Bangladesh." />
+    <meta name="keywords" content="cyber security, penetration testing, security engineer, backend developer, Python, Django, YOLOv8, Linux, Bangladesh" />
+    <meta name="author" content="Rakib Hassan" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="Rakib Hassan | Cyber Security Engineer" />
+    <meta property="og:description" content="Cyber Security Engineer with expertise in penetration testing, backend development, and applied AI." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Rakib Hassan | Cyber Security Engineer" />
+    <meta name="twitter:description" content="Cyber Security Engineer — securing systems, building resilient infrastructure." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- ═══ THEME TOKENS — inline to survive build & prevent flash ═══ -->
+    <style>
+      :root {
+        --bg-primary: #f0f2f5;
+        --bg-secondary: #ffffff;
+        --bg-surface: rgba(255, 255, 255, 0.85);
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #94a3b8;
+        --accent: #0891b2;
+        --accent-glow: rgba(8, 145, 178, 0.3);
+        --card-bg: rgba(255, 255, 255, 0.65);
+        --card-border: rgba(0, 0, 0, 0.08);
+        --glass-bg: rgba(255, 255, 255, 0.6);
+        --glass-border: rgba(0, 0, 0, 0.08);
+        --input-bg: rgba(0, 0, 0, 0.04);
+        --input-border: rgba(0, 0, 0, 0.1);
+        --hero-bg-from: #1e293b;
+        --hero-bg-via: #0f172a;
+        --hero-bg-to: #1e293b;
+        --hero-fade: #f0f2f5;
+        --nav-bg: rgba(255, 255, 255, 0.8);
+        --nav-border: rgba(0, 0, 0, 0.06);
+        --mobile-menu-bg: rgba(255, 255, 255, 0.95);
+        --modal-bg: #ffffff;
+        --modal-overlay: rgba(0, 0, 0, 0.5);
+        --divider: rgba(0, 0, 0, 0.06);
+        --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+        --search-bg: rgba(255, 255, 255, 0.9);
+        --search-border: rgba(0, 0, 0, 0.08);
+        --search-item-hover: rgba(0, 0, 0, 0.05);
+      }
+      .dark {
+        --bg-primary: #0a0a0f;
+        --bg-secondary: #12121a;
+        --bg-surface: rgba(18, 18, 30, 0.7);
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --accent: #00f0ff;
+        --accent-glow: rgba(0, 240, 255, 0.3);
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --glass-bg: rgba(18, 18, 30, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --input-bg: rgba(255, 255, 255, 0.05);
+        --input-border: rgba(255, 255, 255, 0.1);
+        --hero-bg-from: #0a0a0f;
+        --hero-bg-via: #0d0d1a;
+        --hero-bg-to: #0a0a0f;
+        --hero-fade: #0a0a0f;
+        --nav-bg: rgba(10, 10, 15, 0.8);
+        --nav-border: rgba(255, 255, 255, 0.05);
+        --mobile-menu-bg: rgba(10, 10, 15, 0.95);
+        --modal-bg: #12121a;
+        --modal-overlay: rgba(0, 0, 0, 0.7);
+        --divider: rgba(255, 255, 255, 0.05);
+        --scrollbar-thumb: rgba(0, 240, 255, 0.3);
+        --search-bg: rgba(18, 18, 26, 0.9);
+        --search-border: rgba(255, 255, 255, 0.1);
+        --search-item-hover: rgba(255, 255, 255, 0.1);
+      }
+    </style>
+
+    <!-- Flash-of-unstyled-theme prevention: runs BEFORE React hydration -->
+    <script>
+      (function() {
+        var stored = localStorage.getItem('theme');
+        var theme = stored;
+        if (!theme || (stored !== 'light' && stored !== 'dark')) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+        document.documentElement.classList.toggle('light', theme === 'light');
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
