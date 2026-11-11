@@ -24,7 +24,7 @@ export const AboutSection: React.FC = () => {
     <section
       id="about"
       aria-label="Technical Matrix, Experience & Credentials"
-      className="py-24 px-4 sm:px-6 md:px-8 lg:px-12 border-b border-[var(--color-hairline)]"
+      className="scroll-mt-20 py-24 px-4 sm:px-6 md:px-8 lg:px-12 border-b border-[var(--color-hairline)]"
     >
       <div className="max-w-6xl mx-auto space-y-16">
         {/* Section Header */}
