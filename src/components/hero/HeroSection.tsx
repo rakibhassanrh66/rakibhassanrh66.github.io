@@ -1,197 +1,125 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { FiChevronDown, FiShield } from 'react-icons/fi';
-import ParticleBackground from '@/components/hero/ParticleBackground';
-import CVDownload from '@/components/ui/CVDownload';
-import SocialLinks from '@/components/ui/SocialLinks';
+import { FiArrowDown, FiDownload, FiMail, FiShield, FiTerminal, FiExternalLink } from 'react-icons/fi';
 import { portfolioData } from '@/data/portfolio';
-import { useDeviceDetect } from '@/hooks/useDeviceDetect';
+import { SystemTelemetrySpecimen } from '@/components/hero/SystemTelemetrySpecimen';
 
-const typingTexts = [
-  'Cyber Security Engineer',
-  'Penetration Tester',
-  'Backend Developer',
-  'Security Researcher',
-];
-
-function TypeWriter() {
-  const [textIndex, setTextIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const current = typingTexts[textIndex];
-
-  useEffect(() => {
-    const speed = isDeleting ? 30 : 60;
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        if (charIndex < current.length) {
-          setCharIndex(charIndex + 1);
-        } else {
-          setTimeout(() => setIsDeleting(true), 2000);
-        }
-      } else {
-        if (charIndex > 0) {
-          setCharIndex(charIndex - 1);
-        } else {
-          setIsDeleting(false);
-          setTextIndex((textIndex + 1) % typingTexts.length);
-        }
-      }
-    }, speed);
-    return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, textIndex, current]);
+export const HeroSection: React.FC = () => {
+  function scrollTo(id: string) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
   return (
-    <span className="text-neon-cyan">
-      {current.slice(0, charIndex)}
-      <motion.span
-        className="inline-block w-[2px] h-[1em] bg-neon-cyan ml-0.5 align-middle"
-        animate={{ opacity: [1, 0] }}
-        transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
-      />
-    </span>
-  );
-}
-
-export default function HeroSection() {
-  const { deviceType, isLowPower } = useDeviceDetect();
-
-    return (
     <section
       id="hero"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden py-20"
+      aria-label="Introduction & Systems Overview"
+      className="relative min-h-[92vh] flex items-center justify-center pt-28 pb-16 px-4 sm:px-6 md:px-8 lg:px-12 overflow-hidden border-b border-[var(--color-hairline)]"
     >
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[var(--hero-bg-from)] via-[var(--hero-bg-via)] to-[var(--hero-bg-to)]" />
+      {/* Subtle technical background grid */}
+      <div className="absolute inset-0 technical-grid pointer-events-none" />
 
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 grid-pattern opacity-50" />
+      <div className="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        {/* Left Column (60%): Editorial Introduction & Action Hierarchy */}
+        <div className="lg:col-span-7 space-y-6 text-left">
+          {/* Operational Status Eyebrow */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--color-hairline-strong)] bg-[var(--color-surface-2)] text-[12px] font-mono text-[var(--color-ink-muted)]">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>{portfolioData.availability}</span>
+          </div>
 
-      {/* 3D Particles */}
-      {!isLowPower && deviceType === 'desktop' && <ParticleBackground />}
+          {/* Master Display Headline */}
+          <h1 className="type-display text-[var(--color-ink)] max-w-2xl">
+            {portfolioData.role}
+          </h1>
 
-      {/* Animated orbs for mobile/tablet */}
-      {isLowPower && (
-        <>
-          <motion.div
-            className="absolute top-1/4 left-1/4 h-48 w-48 rounded-full bg-neon-cyan/10 blur-3xl"
-            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-            transition={{ duration: 4, repeat: Infinity }}
-          />
-          <motion.div
-            className="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-electric-purple/10 blur-3xl"
-            animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
-            transition={{ duration: 5, repeat: Infinity }}
-          />
-        </>
-      )}
+          {/* Narrative Thesis */}
+          <p className="type-body text-[var(--color-ink-muted)] max-w-xl">
+            {portfolioData.headline} {portfolioData.tagline}
+          </p>
 
-      {/* Content Container - Changed to flex-row on large screens */}
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col lg:flex-row items-center justify-between px-6 gap-12 lg:gap-20">
-        {/* Left Side: Text Content */}
-        <div className="flex flex-col items-center lg:items-start text-center lg:text-left flex-1">
-          {/* Badge */}
-          <motion.div
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-neon-cyan/20 bg-neon-cyan/5 px-4 py-2 backdrop-blur-sm"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <FiShield className="h-4 w-4 text-neon-cyan" />
-            <span className="text-xs font-medium tracking-wider text-neon-cyan uppercase">
-              Cyber Security Portfolio
-            </span>
-          </motion.div>
+          {/* Standardized Action Button Matrix (44px fixed height) */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <button
+              onClick={() => scrollTo('projects')}
+              className="btn-base btn-md btn-primary"
+            >
+              <span>Explore Case Studies</span>
+              <FiArrowDown size={16} />
+            </button>
 
-          {/* Name */}
-          <motion.h1
-            className="mb-3 text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl font-[Orbitron]"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            {portfolioData.name.split(' ').map((word, i) => (
-              <span key={i}>
-                {i === 1 && <span className="gradient-text">{word}</span>}
-                {i !== 1 && word}
-                {i === 0 && ' '}
-              </span>
-            ))}
-          </motion.h1>
+            <a
+              href={portfolioData.cvUrl}
+              download="Rakib_Hassan_CV.pdf"
+              className="btn-base btn-md btn-secondary"
+            >
+              <FiDownload size={16} />
+              <span>Download CV (PDF)</span>
+            </a>
 
-          {/* Typing effect */}
-          <motion.div
-            className="mb-4 text-lg sm:text-xl lg:text-2xl font-medium text-white/60"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            <TypeWriter />
-          </motion.div>
+            <button
+              onClick={() => scrollTo('contact')}
+              className="btn-base btn-md btn-ghost"
+            >
+              <FiMail size={16} />
+              <span>Direct Inquiry</span>
+            </button>
+          </div>
 
-          {/* Tagline */}
-          <motion.p
-            className="mb-8 max-w-xl text-sm sm:text-base text-white/40 leading-relaxed"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            {portfolioData.tagline}
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            className="mb-10 flex gap-4 justify-center lg:justify-start"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <CVDownload variant="button" />
-            {/* You can add a 'Hire Me' button here if you have one, otherwise leave as is */}
-          </motion.div>
-
-          {/* Social Links */}
-          <motion.div
-            className="flex justify-center lg:justify-start"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          >
-            <SocialLinks iconSize="md" />
-          </motion.div>
+          {/* Monospace System Telemetry Rail */}
+          <div className="pt-6 border-t border-[var(--color-hairline)] grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs font-mono text-[var(--color-ink-faint)]">
+            <div>
+              <span className="block text-[10px] text-[var(--color-ink-muted)]">PGP_FINGERPRINT</span>
+              <span className="truncate">{portfolioData.pgpKeyId}</span>
+            </div>
+            <div>
+              <span className="block text-[10px] text-[var(--color-ink-muted)]">CORE_STACK</span>
+              <span>LINUX // PYTHON // DART</span>
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <span className="block text-[10px] text-[var(--color-ink-muted)]">LOCATION_BASE</span>
+              <span>DHAKA, BD [UTC+6]</span>
+            </div>
+          </div>
         </div>
 
-                        {/* Right Side: Your Profile Picture */}
-        <motion.div
-          className="flex relative flex-shrink-0 mt-10 lg:mt-0 justify-center"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 blur-xl opacity-60 animate-pulse"></div>
+        {/* Right Column (40%): Live Specimen Enclave & Visual Anchor */}
+        <div className="lg:col-span-5 flex flex-col items-center lg:items-end space-y-6">
+          <SystemTelemetrySpecimen />
 
-          <div className="relative w-56 h-72 sm:w-64 sm:h-80 lg:w-80 lg:h-[420px] rounded-[2rem] p-1 bg-black/30 overflow-hidden">
-            <img
-              src="/images/rakib.jpg"
-              alt="Rakib Hassan"
-              className="w-full h-full rounded-[1.75rem] object-contain border-2 border-white/10 shadow-2xl"
-            />
+          {/* Physical Verification Card (Profile + Status) */}
+          <div className="w-full max-w-lg p-3 rounded-[var(--radius-md)] border border-[var(--color-hairline)] bg-[var(--color-surface-2)] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img
+                src="/images/rakib.jpg"
+                alt="Rakib Hassan"
+                className="w-10 h-10 rounded-full object-cover border border-[var(--color-hairline-strong)]"
+              />
+              <div>
+                <div className="text-xs font-semibold text-[var(--color-ink)]">
+                  {portfolioData.name}
+                </div>
+                <div className="text-[11px] font-mono text-[var(--color-ink-faint)]">
+                  B.Sc. CSE (Cyber Security) · Daffodil Univ
+                </div>
+              </div>
+            </div>
+            <a
+              href="https://github.com/rakibhassanrh66"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] transition-colors p-1"
+              aria-label="GitHub Profile"
+            >
+              <FiExternalLink size={16} />
+            </a>
           </div>
-        </motion.div>
-
+        </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <FiChevronDown className="h-6 w-6 text-white/30" />
-      </motion.div>
-
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[var(--hero-fade)] to-transparent pointer-events-none" />
     </section>
-  );;
-}
+  );
+};
+
+export default HeroSection;
