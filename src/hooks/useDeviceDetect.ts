@@ -83,14 +83,16 @@ export function useDeviceDetect(): DeviceInfo {
     const handleResize = () => {
       debounceTimer.push(setTimeout(update, 150));
     };
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', () => {
+    const handleOrientation = () => {
       debounceTimer.push(setTimeout(update, 300));
-    });
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleOrientation);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', () => {});
+      window.removeEventListener('orientationchange', handleOrientation);
       debounceTimer.forEach(clearTimeout);
     };
   }, []);

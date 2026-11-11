@@ -1,170 +1,210 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiMenu, FiX } from 'react-icons/fi';
-import ThemeToggle from '@/components/ui/ThemeToggle';
-import SearchBar from '@/components/ui/SearchBar';
-import CVDownload from '@/components/ui/CVDownload';
+import { FiSun, FiMoon, FiMenu, FiX, FiCommand, FiDownload } from 'react-icons/fi';
+import { CommandPalette } from '@/components/ui/CommandPalette';
+import { portfolioData } from '@/data/portfolio';
 import { useScrollPosition } from '@/hooks/useScrollPosition';
-import { useDeviceDetect } from '@/hooks/useDeviceDetect';
 
-interface NavProps {
+interface NavigationProps {
   isDark: boolean;
   onToggleTheme: () => void;
   activeSection: string;
 }
 
-const navLinks = [
-  { label: 'Home', href: '#hero' },
-  { label: 'About', href: '#about' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Contact', href: '#contact' },
-];
-
-export default function Navigation({ isDark, onToggleTheme, activeSection }: NavProps) {
-  const { scrollDirection, isAtTop } = useScrollPosition();
-  const { deviceType } = useDeviceDetect();
-  const [searchOpen, setSearchOpen] = useState(false);
+export const Navigation: React.FC<NavigationProps> = ({
+  isDark,
+  onToggleTheme,
+  activeSection,
+}) => {
+  const { scrollY, scrollDirection, isAtTop } = useScrollPosition();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isMobile = deviceType === 'mobile';
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
-  // Auto-hide logic
-  const shouldHide = !isAtTop && scrollDirection === 'down' && !mobileMenuOpen;
-  const navBg = isAtTop
-    ? 'bg-transparent'
-    : 'bg-[var(--nav-bg)] backdrop-blur-xl border-b border-[var(--nav-border)]';
-
-  // Keyboard shortcut
+  // Global Ctrl+K / Cmd+K listener
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setSearchOpen(true);
+        setCommandPaletteOpen((prev) => !prev);
       }
-      if (e.key === 'Escape') {
-        setSearchOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  const navLinks = [
+    { label: 'Overview', href: '#hero', id: 'hero' },
+    { label: 'Projects', href: '#projects', id: 'projects' },
+    { label: 'Stack & Matrix', href: '#about', id: 'about' },
+    { label: 'Contact', href: '#contact', id: 'contact' },
+  ];
+
+  // Auto-hide navigation logic
+  const shouldHide = scrollY > 120 && scrollDirection === 'down' && !mobileMenuOpen;
+
+  function handleNavClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    const id = href.replace('#', '');
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
   return (
     <>
-      <motion.nav
-        className={`fixed left-0 right-0 top-0 z-50 transition-colors duration-500 ${navBg}`}
-        animate={{ y: shouldHide ? -100 : 0 }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
+      <header
+        className={`fixed top-0 left-0 right-0 z-40 flex justify-center px-4 pt-3 sm:pt-4 transition-transform duration-300 pointer-events-none ${
+          shouldHide ? '-translate-y-24' : 'translate-y-0'
+        }`}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-          {/* Logo */}
-          <motion.a
+        <nav
+          aria-label="Primary"
+          className="pointer-events-auto w-full max-w-4xl h-14 px-3 sm:px-4 rounded-full border border-[var(--color-hairline)] bg-[var(--color-surface-1)]/90 backdrop-blur-md shadow-lg flex items-center justify-between transition-colors"
+        >
+          {/* Brand Monogram */}
+          <a
             href="#hero"
-            className="flex items-center gap-2"
-            whileHover={{ scale: 1.02 }}
+            onClick={(e) => handleNavClick(e, '#hero')}
+            className="flex items-center gap-2 group px-2 text-decoration-none"
+            aria-label="Rakib Hassan Portfolio Home"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-neon-cyan to-electric-purple">
-              <span className="text-sm font-bold text-white font-[Orbitron]">RH</span>
-            </div>
-            <span className="hidden text-sm font-semibold text-[var(--text-primary)] sm:block font-[Orbitron] tracking-wider">
-              RAKIB<span className="text-neon-cyan">.dev</span>
+            <span className="w-8 h-8 rounded-full bg-[var(--color-surface-2)] border border-[var(--color-hairline-strong)] flex items-center justify-center font-mono text-xs font-semibold text-[var(--color-ink)] group-hover:border-[var(--color-accent)] transition-colors">
+              {portfolioData.monogram}
             </span>
-          </motion.a>
+            <div className="hidden sm:flex flex-col text-left">
+              <span className="text-xs font-semibold tracking-tight text-[var(--color-ink)] leading-none">
+                {portfolioData.name}
+              </span>
+              <span className="text-[10px] font-mono text-[var(--color-ink-faint)] leading-tight mt-0.5">
+                SEC_ENG // DHAKA
+              </span>
+            </div>
+          </a>
 
-          {/* Desktop Nav */}
-          {!isMobile && (
-            <div className="hidden items-center gap-1 md:flex">
-              {navLinks.map((link) => (
-                <motion.a
-                  key={link.href}
+          {/* Desktop Nav Items */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.id;
+              return (
+                <a
+                  key={link.id}
                   href={link.href}
-                  className={`relative rounded-full px-4 py-2 text-sm transition-colors ${
-                    activeSection === link.href.slice(1)
-                      ? 'text-neon-cyan'
-                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className={`relative px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                    isActive
+                      ? 'text-[var(--color-ink)] font-semibold'
+                      : 'text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]'
                   }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                 >
-                  {link.label}
-                  {activeSection === link.href.slice(1) && (
+                  {isActive && (
                     <motion.div
-                      className="absolute inset-0 rounded-full bg-neon-cyan/10 border border-neon-cyan/20"
                       layoutId="activeNav"
+                      className="absolute inset-0 rounded-full bg-[var(--color-surface-2)] border border-[var(--color-hairline)]"
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
-                </motion.a>
+                  <span className="relative z-10">{link.label}</span>
+                </a>
+              );
+            })}
+          </div>
+
+          {/* Right Action Cluster */}
+          <div className="flex items-center gap-2">
+            {/* Command Palette Trigger */}
+            <button
+              onClick={() => setCommandPaletteOpen(true)}
+              className="btn-base btn-sm btn-ghost gap-1 px-2.5 text-xs text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] border border-[var(--color-hairline)] rounded-full"
+              aria-label="Open Command Palette"
+            >
+              <FiCommand size={13} />
+              <span className="hidden sm:inline font-mono text-[11px]">⌘K</span>
+            </button>
+
+            {/* Quick CV Download (Desktop) */}
+            <a
+              href={portfolioData.cvUrl}
+              download="Rakib_Hassan_CV.pdf"
+              className="hidden sm:inline-flex btn-base btn-sm btn-secondary rounded-full"
+              aria-label="Download CV"
+            >
+              <FiDownload size={13} />
+              <span>CV</span>
+            </a>
+
+            {/* Theme Toggle Button */}
+            <button
+              onClick={onToggleTheme}
+              className="w-9 h-9 rounded-full flex items-center justify-center text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-2)] transition-colors border border-[var(--color-hairline)]"
+              aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+            >
+              {isDark ? <FiSun size={15} /> : <FiMoon size={15} />}
+            </button>
+
+            {/* Mobile Menu Hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="md:hidden w-9 h-9 rounded-full flex items-center justify-center text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] border border-[var(--color-hairline)]"
+              aria-label="Toggle mobile menu"
+            >
+              {mobileMenuOpen ? <FiX size={16} /> : <FiMenu size={16} />}
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {/* Mobile Drawer */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.15 }}
+            className="fixed top-20 inset-x-4 z-40 p-4 rounded-[var(--radius-lg)] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-1)]/98 backdrop-blur-lg shadow-2xl md:hidden space-y-3"
+          >
+            <div className="flex flex-col space-y-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className={`px-3 py-2.5 rounded-[var(--radius-md)] text-sm font-medium transition-colors ${
+                    activeSection === link.id
+                      ? 'bg-[var(--color-surface-2)] text-[var(--color-ink)] font-semibold'
+                      : 'text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]'
+                  }`}
+                >
+                  {link.label}
+                </a>
               ))}
             </div>
-          )}
 
-          {/* Actions */}
-          <div className="flex items-center gap-2">
-            <motion.button
-              onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-2 rounded-full border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2 text-xs text-[var(--text-muted)] backdrop-blur-md transition-colors hover:text-[var(--text-primary)]"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Search (⌘K)"
-            >
-              <FiSearch className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Search</span>
-              <kbd className="hidden rounded border border-[var(--card-border)] px-1.5 py-0.5 text-[10px] lg:inline">
-                ⌘K
-              </kbd>
-            </motion.button>
-
-            <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
-
-            {isMobile && (
-              <motion.button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--text-secondary)] backdrop-blur-md"
-                whileTap={{ scale: 0.9 }}
+            <div className="pt-2 border-t border-[var(--color-hairline)] flex items-center justify-between">
+              <a
+                href={portfolioData.cvUrl}
+                download="Rakib_Hassan_CV.pdf"
+                className="btn-base btn-sm btn-secondary w-full justify-center"
               >
-                {mobileMenuOpen ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
-              </motion.button>
-            )}
+                <FiDownload size={14} />
+                <span>Download Technical CV</span>
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            {!isMobile && <CVDownload variant="inline" />}
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {mobileMenuOpen && isMobile && (
-            <motion.div
-              className="border-t border-[var(--divider)] bg-[var(--mobile-menu-bg)] px-4 py-4 backdrop-blur-xl"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-            >
-              <div className="flex flex-col gap-2">
-                {navLinks.map((link) => (
-                  <motion.a
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`rounded-xl px-4 py-3 text-sm transition-colors ${
-                      activeSection === link.href.slice(1)
-                        ? 'bg-neon-cyan/10 text-neon-cyan'
-                        : 'text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)]'
-                    }`}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {link.label}
-                  </motion.a>
-                ))}
-                <div className="mt-2 pt-2 border-t border-[var(--divider)]">
-                  <CVDownload variant="button" className="w-full justify-center" />
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.nav>
-
-      <SearchBar isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      {/* Global Command Palette */}
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        isDark={isDark}
+        onToggleTheme={onToggleTheme}
+      />
     </>
   );
-}
+};
+
+export default Navigation;
