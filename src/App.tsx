@@ -4,6 +4,7 @@ import Navigation from '@/components/layout/Navigation';
 import HeroSection from '@/components/hero/HeroSection';
 import Footer from '@/components/layout/Footer';
 import CursorGlow from '@/components/ui/CursorGlow';
+import { DesignSystemPreview } from '@/components/DesignSystemPreview';
 import { useTheme } from '@/hooks/useTheme';
 import { useDeviceDetect } from '@/hooks/useDeviceDetect';
 
@@ -28,6 +29,13 @@ export default function App() {
   const { toggleTheme, isDark } = useTheme();
   const { deviceType, isLowPower } = useDeviceDetect();
   const [activeSection, setActiveSection] = useState('hero');
+  const [showDesignSystem, setShowDesignSystem] = useState(() => {
+    return typeof window !== 'undefined' && window.location.search.includes('design-system');
+  });
+
+  if (showDesignSystem) {
+    return <DesignSystemPreview onClose={() => setShowDesignSystem(false)} />;
+  }
 
   // Track active section for nav highlighting
   useEffect(() => {
