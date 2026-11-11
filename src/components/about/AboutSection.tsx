@@ -1,234 +1,244 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FiShield, FiServer, FiTool, FiCode, FiCpu, FiGlobe, FiBookOpen } from 'react-icons/fi';
-import { portfolioData, skills, education, experience, languages, achievements, certifications } from '@/data/portfolio';
-import { useDeviceDetect } from '@/hooks/useDeviceDetect';
+import React from 'react';
+import {
+  FiShield,
+  FiTerminal,
+  FiCheckCircle,
+  FiAward,
+  FiCalendar,
+  FiMapPin,
+  FiGlobe,
+  FiBookOpen,
+} from 'react-icons/fi';
+import {
+  portfolioData,
+  skillGroups,
+  experience,
+  education,
+  certifications,
+  achievements,
+  languages,
+} from '@/data/portfolio';
 
-const categoryIcons: Record<string, React.ReactNode> = {
-  security: <FiShield className="h-4 w-4" />,
-  backend: <FiServer className="h-4 w-4" />,
-  tools: <FiTool className="h-4 w-4" />,
-  programming: <FiCode className="h-4 w-4" />,
-  ai: <FiCpu className="h-4 w-4" />,
-  languages: <FiGlobe className="h-4 w-4" />,
-};
-
-const categoryLabels: Record<string, string> = {
-  security: 'Security & Systems',
-  backend: 'Backend & APIs',
-  tools: 'Tools & Platforms',
-  programming: 'Programming',
-  ai: 'AI & Analytics',
-  languages: 'Languages',
-};
-
-function SkillBar({ name, level, delay = 0 }: { name: string; level: number; delay?: number }) {
+export const AboutSection: React.FC = () => {
   return (
-    <motion.div
-      className="group relative"
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.4 }}
+    <section
+      id="about"
+      aria-label="Technical Matrix, Experience & Credentials"
+      className="py-24 px-4 sm:px-6 md:px-8 lg:px-12 border-b border-[var(--color-hairline)]"
     >
-      <div className="mb-1 flex items-center justify-between">
-        <span className="text-xs text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">{name}</span>
-        <span className="text-[10px] text-[var(--text-muted)]">{level}%</span>
-      </div>
-      <div className="h-1.5 overflow-hidden rounded-full bg-[var(--input-bg)]">
-        <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-neon-cyan to-electric-purple"
-          initial={{ width: 0 }}
-          whileInView={{ width: `${level}%` }}
-          viewport={{ once: true }}
-          transition={{ delay: delay + 0.2, duration: 0.8, ease: 'easeOut' }}
-        />
-      </div>
-    </motion.div>
-  );
-}
-
-export default function AboutSection() {
-  const [activeCategory, setActiveCategory] = useState<string>('security');
-  const { deviceType } = useDeviceDetect();
-  const isMobile = deviceType === 'mobile';
-
-  const categories = [...new Set(skills.map((s) => s.category))];
-  const filteredSkills = skills.filter((s) => s.category === activeCategory);
-
-  return (
-    <section id="about" className="relative py-20 lg:py-32">
-      <div className="mx-auto max-w-6xl px-6">
+      <div className="max-w-6xl mx-auto space-y-16">
         {/* Section Header */}
-        <motion.div
-          className="mb-16 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <span className="inline-block rounded-full border border-neon-cyan/20 bg-neon-cyan/5 px-4 py-1.5 text-xs font-medium tracking-wider text-neon-cyan uppercase">
-            About
-          </span>
-          <h2 className="mt-4 text-3xl font-bold text-[var(--text-primary)] sm:text-4xl font-[Orbitron]">
-            Security<span className="gradient-text"> Engineer</span>
+        <div className="space-y-3 pb-6 border-b border-[var(--color-hairline)]">
+          <div className="telemetry-chip">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />
+            <span>OPERATIONAL_BACKGROUND // PROFILE & MATRIX</span>
+          </div>
+          <h2 className="type-h1 text-[var(--color-ink)]">
+            Technical Architecture & Credentials
           </h2>
-        </motion.div>
-
-        <div className={`grid gap-10 ${isMobile ? 'grid-cols-1' : 'grid-cols-5'}`}>
-          {/* Profile Card */}
-          <motion.div
-            className={`glass-panel p-6 ${isMobile ? '' : 'col-span-2'}`}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-neon-cyan to-electric-purple text-lg font-bold text-white">
-                RH
-              </div>
-              <div>
-                <h3 className="font-semibold text-[var(--text-primary)]">{portfolioData.name}</h3>
-                <p className="text-xs text-[var(--text-muted)]">{portfolioData.role}</p>
-              </div>
-            </div>
-            <p className="mb-4 text-sm leading-relaxed text-[var(--text-secondary)]">{portfolioData.aboutDetail}</p>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: 'Projects', value: '5+' },
-                { label: 'Experience', value: '1+ yr' },
-                { label: 'Certifications', value: '2+' },
-                { label: 'Languages', value: '4' },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2.5 text-center"
-                >
-                  <div className="text-lg font-bold gradient-text">{stat.value}</div>
-                  <div className="text-[10px] text-[var(--text-muted)]">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Skills Panel */}
-          <motion.div
-            className={`glass-panel p-6 ${isMobile ? '' : 'col-span-3'}`}
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            {/* Category tabs */}
-            <div className="mb-6 flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <motion.button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
-                    activeCategory === cat
-                      ? 'bg-neon-cyan/15 text-neon-cyan border border-neon-cyan/30'
-                      : 'bg-[var(--card-bg)] text-[var(--text-muted)] border border-[var(--card-border)] hover:text-[var(--text-primary)]'
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {categoryIcons[cat]}
-                  {categoryLabels[cat]}
-                </motion.button>
-              ))}
-            </div>
-
-            <div className="space-y-4">
-              {filteredSkills.map((skill, i) => (
-                <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={i * 0.05} />
-              ))}
-            </div>
-          </motion.div>
+          <p className="type-body text-[var(--color-ink-muted)] max-w-2xl">
+            {portfolioData.summary}
+          </p>
         </div>
 
-        {/* Education & Experience */}
-        <div className={`mt-10 grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
-          {/* Education */}
-          <motion.div
-            className="glass-panel p-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider">
-              <FiBookOpen className="text-neon-cyan" /> Education
+        {/* 1. Technical Capability Matrix (Categorized Taxonomy) */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="type-h2 text-[var(--color-ink)]">
+              1. Systems & Security Matrix
             </h3>
-            <div className="space-y-4">
-              {education.map((edu, i) => (
-                <div key={i} className="border-l-2 border-neon-cyan/20 pl-4">
-                  <p className="text-sm font-medium text-[var(--text-primary)]">{edu.degree}</p>
-                  <p className="text-xs text-[var(--text-muted)]">{edu.institution}</p>
-                  <div className="mt-1 flex items-center gap-2">
-                    <span className="text-[10px] text-[var(--text-muted)]">{edu.period}</span>
-                    {edu.grade && (
-                      <span className="rounded-full bg-neon-cyan/10 px-2 py-0.5 text-[10px] text-neon-cyan">
-                        {edu.grade}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+            <span className="text-xs font-mono text-[var(--color-ink-faint)]">
+              CLASSIFIED TAXONOMY
+            </span>
+          </div>
 
-          {/* Experience & Certifications */}
-          <motion.div
-            className="glass-panel p-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
-            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider">
-              <FiShield className="text-neon-cyan" /> Experience & Recognition
-            </h3>
-            <div className="space-y-4">
-              {experience.map((exp, i) => (
-                <div key={i} className="border-l-2 border-electric-purple/20 pl-4">
-                  <p className="text-sm font-medium text-[var(--text-primary)]">{exp.role}</p>
-                  <p className="text-xs text-[var(--text-muted)]">{exp.company} — {exp.location}</p>
-                  <span className="text-[10px] text-[var(--text-muted)]">{exp.period}</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {skillGroups.map((group) => (
+              <div
+                key={group.category}
+                className="panel-surface p-6 rounded-[var(--radius-lg)] space-y-4 hover:border-[var(--color-hairline-strong)] transition-all flex flex-col justify-between"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-mono font-semibold text-[var(--color-accent)] uppercase">
+                    <FiShield size={14} />
+                    <span>{group.category}</span>
+                  </div>
+                  <p className="text-xs text-[var(--color-ink-muted)] font-mono leading-relaxed">
+                    {group.description}
+                  </p>
                 </div>
-              ))}
-              {certifications.map((cert, i) => (
-                <div key={i} className="border-l-2 border-neon-cyan/20 pl-4">
-                  <p className="text-sm font-medium text-[var(--text-secondary)]">{cert.title}</p>
-                  <p className="text-xs text-[var(--text-muted)]">{cert.description}</p>
-                </div>
-              ))}
-              {/* Languages */}
-              <div className="border-l-2 border-electric-purple/20 pl-4">
-                <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">Languages</p>
-                <div className="flex flex-wrap gap-2">
-                  {languages.map((lang) => (
-                    <span
-                      key={lang.name}
-                      className="rounded-full border border-[var(--card-border)] bg-[var(--card-bg)] px-2 py-0.5 text-[10px] text-[var(--text-muted)]"
+
+                <div className="space-y-1.5 pt-4 border-t border-[var(--color-hairline)]">
+                  {group.skills.map((skill) => (
+                    <div
+                      key={skill.name}
+                      className="flex items-center justify-between py-1 text-xs font-mono text-[var(--color-ink)]"
                     >
-                      {lang.name}: {lang.level}
-                    </span>
+                      <span className="truncate pr-2">{skill.name}</span>
+                      <span className="text-[10px] text-[var(--color-ink-faint)] px-1.5 py-0.5 rounded bg-[var(--color-surface-2)] shrink-0">
+                        {skill.tag}
+                      </span>
+                    </div>
                   ))}
                 </div>
               </div>
-              {/* Achievements */}
-              <div className="border-l-2 border-neon-cyan/20 pl-4">
-                <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">Achievements</p>
-                <ul className="space-y-1">
-                  {achievements.map((a, i) => (
-                    <li key={i} className="text-xs text-[var(--text-muted)]">• {a}</li>
-                  ))}
-                </ul>
-              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 2. Professional Experience & Academic Timeline */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-6 border-t border-[var(--color-hairline)]">
+          {/* Left: Professional Work History */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-2 border-b border-[var(--color-hairline)]">
+              <h3 className="type-h2 text-[var(--color-ink)] flex items-center gap-2">
+                <FiTerminal size={18} className="text-[var(--color-accent)]" />
+                <span>Professional Experience</span>
+              </h3>
+              <span className="text-xs font-mono text-[var(--color-ink-faint)]">
+                INDUSTRY
+              </span>
             </div>
-          </motion.div>
+
+            <div className="space-y-6">
+              {experience.map((item) => (
+                <div
+                  key={item.role + item.organization}
+                  className="panel-surface p-6 rounded-[var(--radius-lg)] space-y-3"
+                >
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <h4 className="text-sm font-semibold text-[var(--color-ink)]">
+                      {item.role}
+                    </h4>
+                    <span className="text-xs font-mono text-[var(--color-accent)] font-semibold">
+                      {item.period}
+                    </span>
+                  </div>
+
+                  <div className="text-xs font-mono text-[var(--color-ink-muted)] flex items-center gap-3">
+                    <span>{item.organization}</span>
+                    <span>•</span>
+                    <span className="text-[var(--color-ink-faint)]">{item.location}</span>
+                  </div>
+
+                  <ul className="space-y-1.5 text-xs text-[var(--color-ink-muted)] pt-2 border-t border-[var(--color-hairline)]">
+                    {item.bullets.map((b, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="text-[var(--color-accent)] select-none">›</span>
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: Academic Foundation */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-2 border-b border-[var(--color-hairline)]">
+              <h3 className="type-h2 text-[var(--color-ink)] flex items-center gap-2">
+                <FiBookOpen size={18} className="text-[var(--color-accent)]" />
+                <span>Academic Record</span>
+              </h3>
+              <span className="text-xs font-mono text-[var(--color-ink-faint)]">
+                EDUCATION
+              </span>
+            </div>
+
+            <div className="space-y-6">
+              {education.map((item) => (
+                <div
+                  key={item.degree}
+                  className="panel-surface p-6 rounded-[var(--radius-lg)] space-y-3"
+                >
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <h4 className="text-sm font-semibold text-[var(--color-ink)]">
+                      {item.degree}
+                    </h4>
+                    <span className="text-xs font-mono text-[var(--color-accent)] font-semibold">
+                      {item.period}
+                    </span>
+                  </div>
+
+                  <div className="text-xs font-mono text-[var(--color-ink-muted)] flex items-center gap-3">
+                    <span>{item.institution}</span>
+                    <span>•</span>
+                    <span className="text-emerald-500 font-semibold">{item.grade}</span>
+                  </div>
+
+                  <ul className="space-y-1 text-xs text-[var(--color-ink-muted)] pt-2 border-t border-[var(--color-hairline)]">
+                    {item.highlights.map((h, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="text-[var(--color-accent)] select-none">›</span>
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Verified Certifications & Personal Milestones */}
+        <div className="pt-6 border-t border-[var(--color-hairline)] space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="type-h2 text-[var(--color-ink)]">
+              3. Verified Credentials & Milestones
+            </h3>
+            <span className="text-xs font-mono text-[var(--color-ink-faint)]">
+              VERIFICATIONS
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {certifications.map((cert) => (
+              <div
+                key={cert.title}
+                className="panel-surface p-5 rounded-[var(--radius-lg)] flex items-start gap-3.5"
+              >
+                <div className="w-8 h-8 rounded-full bg-[var(--color-surface-2)] border border-[var(--color-hairline-strong)] flex items-center justify-center text-[var(--color-accent)] shrink-0 mt-0.5">
+                  <FiAward size={15} />
+                </div>
+                <div className="space-y-1 text-left">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <h4 className="text-xs font-semibold text-[var(--color-ink)]">
+                      {cert.title}
+                    </h4>
+                    <span className="text-[11px] font-mono text-[var(--color-ink-faint)] shrink-0">
+                      {cert.issued}
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-mono text-[var(--color-accent)]">
+                    {cert.issuer}
+                  </div>
+                  <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
+                    {cert.summary}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Personal Milestones / Endurance Accomplishments */}
+          <div className="panel-surface p-6 rounded-[var(--radius-lg)] space-y-3 mt-6">
+            <div className="text-xs font-mono font-semibold text-[var(--color-accent)] uppercase">
+              // ENDURANCE & COMMUNITY RECORD
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              {achievements.map((item, i) => (
+                <div key={i} className="flex items-start gap-2.5 text-xs text-[var(--color-ink)] font-mono">
+                  <FiCheckCircle size={14} className="text-emerald-500 shrink-0 mt-0.5" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default AboutSection;
