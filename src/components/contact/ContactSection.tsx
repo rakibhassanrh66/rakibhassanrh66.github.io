@@ -1,229 +1,277 @@
-import { useState, FormEvent } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { FiSend, FiMail, FiMapPin, FiPhone, FiCheck, FiCalendar } from 'react-icons/fi';
-import { portfolioData } from '@/data/portfolio';
-import SocialLinks from '@/components/ui/SocialLinks';
-import TimeZone from '@/components/ui/TimeZone';
-import { useDeviceDetect } from '@/hooks/useDeviceDetect';
+import {
+  FiMail,
+  FiMapPin,
+  FiPhone,
+  FiCheck,
+  FiCopy,
+  FiSend,
+  FiShield,
+  FiExternalLink,
+} from 'react-icons/fi';
+import { portfolioData, socialLinks } from '@/data/portfolio';
 
-export default function ContactSection() {
+export const ContactSection: React.FC = () => {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
-  const { deviceType } = useDeviceDetect();
-  const isMobile = deviceType === 'mobile';
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedPgp, setCopiedPgp] = useState(false);
+
+  function copyText(text: string, type: 'email' | 'pgp') {
+    navigator.clipboard.writeText(text);
+    if (type === 'email') {
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
+    } else {
+      setCopiedPgp(true);
+      setTimeout(() => setCopiedPgp(false), 2000);
+    }
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus('sending');
 
+    // Basic sanitization
+    const payload = {
+      name: form.name.trim().slice(0, 100),
+      email: form.email.trim().slice(0, 100),
+      message: form.message.trim().slice(0, 2000),
+    };
+
     try {
-      // Simulate API call — in production, point to your backend
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
         setStatus('sent');
         setForm({ name: '', email: '', message: '' });
-        setTimeout(() => setStatus('idle'), 4000);
+        setTimeout(() => setStatus('idle'), 5000);
       } else {
         setStatus('error');
-        setTimeout(() => setStatus('idle'), 4000);
       }
     } catch {
-      // Fallback: store in localStorage for demo
-      const stored = JSON.parse(localStorage.getItem('contact_messages') || '[]');
-      stored.push({ ...form, timestamp: new Date().toISOString() });
-      localStorage.setItem('contact_messages', JSON.stringify(stored));
-      setStatus('sent');
-      setForm({ name: '', email: '', message: '' });
-      setTimeout(() => setStatus('idle'), 4000);
+      // Network failure or local static environment: graceful mailto fallback
+      setStatus('error');
     }
   };
 
-  const contactInfo = [
-    { icon: <FiMail className="h-4 w-4" />, label: 'Email', value: portfolioData.email, href: `mailto:${portfolioData.email}` },
-    { icon: <FiPhone className="h-4 w-4" />, label: 'Phone', value: portfolioData.phone, href: `tel:${portfolioData.phone}` },
-    { icon: <FiMapPin className="h-4 w-4" />, label: 'Location', value: portfolioData.address },
-  ];
+  function openMailClient() {
+    const subject = encodeURIComponent(`Engineering Inquiry from ${form.name || 'Website Visitor'}`);
+    const body = encodeURIComponent(
+      `Hello Rakib,\n\n${form.message || 'I would like to discuss an engineering role / security advisory.'}\n\nFrom: ${form.name} (${form.email})`
+    );
+    window.location.href = `mailto:${portfolioData.email}?subject=${subject}&body=${body}`;
+  }
 
   return (
-    <section id="contact" className="relative py-20 lg:py-32">
-      <div className="mx-auto max-w-6xl px-6">
+    <section
+      id="contact"
+      aria-label="Direct Contact & Engineering Inquiries"
+      className="py-24 px-4 sm:px-6 md:px-8 lg:px-12 border-b border-[var(--color-hairline)]"
+    >
+      <div className="max-w-6xl mx-auto space-y-12">
         {/* Section Header */}
-        <motion.div
-          className="mb-16 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <span className="inline-block rounded-full border border-neon-cyan/20 bg-neon-cyan/5 px-4 py-1.5 text-xs font-medium tracking-wider text-neon-cyan uppercase">
-            Get In Touch
-          </span>
-          <h2 className="mt-4 text-3xl font-bold text-[var(--text-primary)] sm:text-4xl font-[Orbitron]">
-            Start a <span className="gradient-text">Conversation</span>
+        <div className="space-y-3 pb-6 border-b border-[var(--color-hairline)]">
+          <div className="telemetry-chip">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />
+            <span>INQUIRY_ROUTING // SECURE CHANNELS</span>
+          </div>
+          <h2 className="type-h1 text-[var(--color-ink)]">
+            Initiate Direct Engineering Contact
           </h2>
-          <p className="mt-3 text-sm text-[var(--text-muted)] max-w-lg mx-auto">
-            Interested in working together? Send me a message and I&apos;ll get back to you.
+          <p className="type-body text-[var(--color-ink-muted)] max-w-2xl">
+            Direct channel for security advisory, software infrastructure inquiries, and technical roles. Messages are received directly by Rakib.
           </p>
-        </motion.div>
+        </div>
 
-        <div className={`grid gap-8 ${isMobile ? 'grid-cols-1' : 'grid-cols-5'}`}>
-          {/* Contact Form */}
-          <motion.form
-            onSubmit={handleSubmit}
-            className={`glass-panel p-6 ${isMobile ? '' : 'col-span-3'}`}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="space-y-4">
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-muted)]">Name</label>
-                <input
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="Your name"
-                  className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all focus:border-neon-cyan/50 focus:shadow-[0_0_20px_rgba(0,240,255,0.05)]"
-                />
+        {/* Asymmetric Split Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          {/* Left Column (5 cols): Verified Channels & PGP Key */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="panel-surface p-6 rounded-[var(--radius-lg)] space-y-5">
+              <div className="text-xs font-mono font-semibold text-[var(--color-accent)] uppercase">
+                // DIRECT COMMUNICATIONS
               </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-muted)]">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="your@email.com"
-                  className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all focus:border-neon-cyan/50 focus:shadow-[0_0_20px_rgba(0,240,255,0.05)]"
-                />
+
+              {/* Primary Email with 1-click copy */}
+              <div className="p-3.5 rounded-[var(--radius-md)] bg-[var(--color-surface-2)] border border-[var(--color-hairline)] space-y-1.5">
+                <span className="text-[11px] font-mono text-[var(--color-ink-faint)]">PRIMARY INBOX</span>
+                <div className="flex items-center justify-between">
+                  <a
+                    href={`mailto:${portfolioData.email}`}
+                    className="text-xs font-mono font-semibold text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors truncate pr-2"
+                  >
+                    {portfolioData.email}
+                  </a>
+                  <button
+                    onClick={() => copyText(portfolioData.email, 'email')}
+                    className="btn-base btn-sm btn-ghost px-2 text-xs font-mono shrink-0"
+                    aria-label="Copy primary email"
+                  >
+                    {copiedEmail ? <FiCheck size={13} className="text-emerald-500" /> : <FiCopy size={13} />}
+                  </button>
+                </div>
               </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-muted)]">Message</label>
-                <textarea
-                  required
-                  rows={4}
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  placeholder="Tell me about your project or opportunity..."
-                  className="w-full resize-none rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all focus:border-neon-cyan/50 focus:shadow-[0_0_20px_rgba(0,240,255,0.05)]"
-                />
+
+              {/* Secondary Backup Email */}
+              <div className="p-3.5 rounded-[var(--radius-md)] bg-[var(--color-surface-2)] border border-[var(--color-hairline)] space-y-1.5">
+                <span className="text-[11px] font-mono text-[var(--color-ink-faint)]">BACKUP INBOX</span>
+                <div className="flex items-center justify-between">
+                  <a
+                    href={`mailto:${portfolioData.secondaryEmail}`}
+                    className="text-xs font-mono text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] transition-colors truncate pr-2"
+                  >
+                    {portfolioData.secondaryEmail}
+                  </a>
+                </div>
               </div>
-              <motion.button
-                type="submit"
-                disabled={status === 'sending'}
-                className={`flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium transition-all ${
-                  status === 'sent'
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : status === 'error'
-                    ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                    : 'bg-gradient-to-r from-neon-cyan/20 to-electric-purple/20 text-[var(--text-primary)] border border-neon-cyan/30 hover:shadow-[0_0_30px_rgba(0,240,255,0.15)]'
-                }`}
-                whileHover={status === 'idle' ? { scale: 1.01 } : {}}
-                whileTap={status === 'idle' ? { scale: 0.99 } : {}}
-              >
-                {status === 'sending' ? (
-                  <>
-                    <motion.div
-                      className="h-4 w-4 rounded-full border-2 border-neon-cyan/30 border-t-neon-cyan"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+
+              {/* Location & Response Expectation */}
+              <div className="space-y-2 pt-2 text-xs font-mono text-[var(--color-ink-muted)]">
+                <div className="flex items-center gap-2">
+                  <FiMapPin size={14} className="text-[var(--color-ink-faint)] shrink-0" />
+                  <span>{portfolioData.address}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FiPhone size={14} className="text-[var(--color-ink-faint)] shrink-0" />
+                  <span>{portfolioData.phone}</span>
+                </div>
+              </div>
+
+              {/* PGP Fingerprint Card */}
+              <div className="pt-4 border-t border-[var(--color-hairline)] space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="flex items-center gap-1.5 text-[var(--color-accent)] font-semibold">
+                    <FiShield size={13} />
+                    <span>PGP PUBLIC FINGERPRINT</span>
+                  </span>
+                  <button
+                    onClick={() => copyText(portfolioData.pgpKeyId, 'pgp')}
+                    className="text-[11px] font-mono text-[var(--color-ink-faint)] hover:text-[var(--color-ink)]"
+                  >
+                    {copiedPgp ? 'COPIED' : 'COPY'}
+                  </button>
+                </div>
+                <div className="p-2.5 rounded bg-[var(--color-canvas)] border border-[var(--color-hairline)] font-mono text-[11px] text-[var(--color-ink-faint)] select-all break-all">
+                  {portfolioData.pgpKeyId}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column (7 cols): Secure Form */}
+          <div className="lg:col-span-7">
+            <div className="panel-surface p-6 sm:p-8 rounded-[var(--radius-lg)] space-y-6">
+              <div>
+                <h3 className="type-h2 text-[var(--color-ink)]">
+                  Transmit Message
+                </h3>
+                <p className="type-body text-xs text-[var(--color-ink-muted)] mt-1">
+                  Enter your details below. For encrypted dispatches, reach out via ProtonMail.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-mono text-[var(--color-ink-muted)]">
+                      Your Name <span className="text-[var(--color-accent)]">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      placeholder="e.g. Alex Vance"
+                      className="w-full h-11 px-3.5 rounded-[var(--radius-md)] bg-[var(--color-surface-2)] border border-[var(--color-hairline-strong)] text-sm text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:outline-none focus:border-[var(--color-accent)] transition-colors"
                     />
-                    Sending...
-                  </>
-                ) : status === 'sent' ? (
-                  <>
-                    <FiCheck className="h-4 w-4" />
-                    Message Sent!
-                  </>
-                ) : status === 'error' ? (
-                  'Failed — try again'
-                ) : (
-                  <>
-                    <FiSend className="h-4 w-4" />
-                    Send Message
-                  </>
-                )}
-              </motion.button>
-            </div>
-          </motion.form>
-
-          {/* Contact Info Sidebar */}
-          <motion.div
-            className={`flex flex-col gap-4 ${isMobile ? '' : 'col-span-2'}`}
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            {/* Contact Info Card */}
-            <div className="glass-panel p-6">
-              <h3 className="mb-4 text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider">Contact Info</h3>
-              <div className="space-y-3">
-                {contactInfo.map((info) => (
-                  <div key={info.label} className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--card-bg)] text-neon-cyan">
-                      {info.icon}
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-[var(--text-muted)] uppercase">{info.label}</p>
-                      {info.href ? (
-                        <a
-                          href={info.href}
-                          className="text-sm text-[var(--text-secondary)] transition-colors hover:text-neon-cyan"
-                        >
-                          {info.value}
-                        </a>
-                      ) : (
-                        <p className="text-sm text-[var(--text-secondary)]">{info.value}</p>
-                      )}
-                    </div>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Quick Actions */}
-            <div className="glass-panel p-6">
-              <h3 className="mb-4 text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider">Quick Actions</h3>
-              <div className="space-y-3">
-                <motion.a
-                  href={`mailto:${portfolioData.email}?subject=Hiring%20Inquiry`}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-neon-cyan/30 bg-neon-cyan/10 px-4 py-3 text-sm font-medium text-neon-cyan transition-colors hover:bg-neon-cyan/20"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <FiMail className="h-4 w-4" />
-                  Hire Me
-                </motion.a>
-                <motion.a
-                  href={`mailto:${portfolioData.email}?subject=Schedule%20a%20Call`}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--glass-bg)] hover:text-[var(--text-primary)]"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <FiCalendar className="h-4 w-4" />
-                  Schedule Call
-                </motion.a>
-              </div>
-            </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-mono text-[var(--color-ink-muted)]">
+                      Return Email Address <span className="text-[var(--color-accent)]">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="alex@organization.com"
+                      className="w-full h-11 px-3.5 rounded-[var(--radius-md)] bg-[var(--color-surface-2)] border border-[var(--color-hairline-strong)] text-sm text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:outline-none focus:border-[var(--color-accent)] transition-colors"
+                    />
+                  </div>
+                </div>
 
-            {/* Time Zone */}
-            <TimeZone />
+                <div className="space-y-1.5">
+                  <label className="text-xs font-mono text-[var(--color-ink-muted)]">
+                    Inquiry Brief / Scope <span className="text-[var(--color-accent)]">*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows={5}
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    placeholder="Describe the opportunity, security advisory requirements, or project scope..."
+                    className="w-full p-3.5 rounded-[var(--radius-md)] bg-[var(--color-surface-2)] border border-[var(--color-hairline-strong)] text-sm text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:outline-none focus:border-[var(--color-accent)] transition-colors resize-none"
+                  />
+                </div>
 
-            {/* Social Links */}
-            <div className="glass-panel p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-[var(--text-muted)]">Connect</span>
-                <SocialLinks iconSize="sm" />
-              </div>
+                {/* State Feedback */}
+                {status === 'sent' && (
+                  <div className="p-3.5 rounded-[var(--radius-md)] bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-mono flex items-center gap-2">
+                    <FiCheck size={15} />
+                    <span>Message dispatched successfully. A response will follow shortly.</span>
+                  </div>
+                )}
+
+                {status === 'error' && (
+                  <div className="p-3.5 rounded-[var(--radius-md)] bg-amber-500/10 border border-amber-500/20 text-xs font-mono space-y-2">
+                    <div className="text-amber-500 font-semibold">
+                      API endpoint unavailable in current environment.
+                    </div>
+                    <button
+                      type="button"
+                      onClick={openMailClient}
+                      className="btn-base btn-sm btn-secondary text-xs"
+                    >
+                      <FiMail size={13} />
+                      <span>Click to Send via Your Email Client</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Submit Action (44px fixed height) */}
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-[11px] font-mono text-[var(--color-ink-faint)]">
+                    RESPONSE TIME: &lt; 24 HOURS
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={status === 'sending'}
+                    className="btn-base btn-md btn-primary px-6"
+                  >
+                    {status === 'sending' ? (
+                      <span>Transmitting...</span>
+                    ) : (
+                      <>
+                        <span>Transmit Message</span>
+                        <FiSend size={15} />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default ContactSection;
